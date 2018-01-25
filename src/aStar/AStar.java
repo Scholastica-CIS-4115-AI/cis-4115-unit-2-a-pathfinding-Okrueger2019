@@ -127,13 +127,24 @@ public class AStar {
             frontierList.add(neighbor);
             neighbor.setPreviousNode(current);
             neighbor.distanceFromStart = newDistanceFromStart;
-            //neighbor.heuristicDistanceToGoal = getEstimatedDistanceToGoal(neighbor.x, neighbor.y, map.getGoalLocation().x, map.getGoalLocation().y);
-            //neighbor.TotalDistanceFromGoal = neighbor.distanceFromStart + neighbor.heuristicDistanceToGoal;
-            neighbor.TotalDistance = neighbor.distanceFromStart;
+            neighbor.heuristicDistanceToGoal = calcEstimatedDistance(neighbor.x, neighbor.y, map.getGoalLocation().x, map.getGoalLocation().y);
+            neighbor.TotalDistance = neighbor.distanceFromStart + neighbor.heuristicDistanceToGoal;
+            //neighbor.TotalDistance = neighbor.distanceFromStart;
             //keep the frontier list sorted so you explore the best nodes first
-            //Collections.sort(frontierList);
+            Collections.sort(frontierList);
         } else {
-            System.out.println("Neighbor already on Fronter list... do nothing?");
+            
+            double oldDistance = neighbor.distanceFromStart;
+            double newDistance = current.distanceFromStart + distanceBetween;
+            
+            if(newDistance < oldDistance){
+                neighbor.setPreviousNode(current);
+                neighbor.distanceFromStart = newDistance;
+                neighbor.heuristicDistanceToGoal = calcEstimatedDistance(neighbor.x, neighbor.y, map.getGoalLocation().x, map.getGoalLocation().y);
+                neighbor.TotalDistance = neighbor.distanceFromStart + neighbor.heuristicDistanceToGoal;
+                Collections.sort(frontierList);
+            }
+            
             // If the node is already on the frontier, do we need to do anything?  
             // What if this path to the node is better than the first path we found to the node?
             // You need to check if the new distance to the neighbor, newDistanceFromStart, is less than the old distance to the neighbor, neighbor.distanceFromStart) {
